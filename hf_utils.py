@@ -1,8 +1,8 @@
 import requests
 
 def query_hf_model(prompt, hf_token):
-    MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-    HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}
+    MODEL_NAME = "tiiuae/falcon-7b-instruct"
+    HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
 
     headers = {
         "Authorization": f"Bearer {hf_token}",
