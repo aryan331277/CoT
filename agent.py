@@ -1,6 +1,4 @@
-# agent.py
-
-from hf_utils import call_hf_model as call_model
+from hf_utils import query_hf_model as call_model
 from prompts import THINKER_PROMPT, CRITIC_PROMPT
 
 def thinker(question):
