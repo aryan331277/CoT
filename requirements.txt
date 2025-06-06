@@ -1,0 +1,5 @@
+streamlit
+requests
+sympy
+z3-solver
+python-dotenv
