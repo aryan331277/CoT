@@ -9,9 +9,10 @@ CRITIC_PROMPT = """
 You are a reasoning analyst.
 Extract all logical/mathematical claims from the following Chain-of-Thought.
 
-Chain-of-Thought: {reasoning}
+Chain-of-Thought:
+{reasoning}
 
-Return them as a list:
+Return them as a numbered list:
 1. ...
 2. ...
 """
