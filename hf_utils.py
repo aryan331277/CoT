@@ -1,30 +1,36 @@
 # hf_utils.py
 
 import requests
-from config import HF_API_URL
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
+def query_hf_model(prompt, hf_token):
+    MODEL_NAME = "mistralai/Mistral-7B-v0.1"
+    HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}" 
 
-HF_TOKEN = os.getenv("HF_TOKEN")
-
-def query_hf_model(prompt):
     headers = {
-        "Authorization": f"Bearer {HF_TOKEN}",
+        "Authorization": f"Bearer {hf_token}",
         "Content-Type": "application/json"
     }
     payload = {
         "inputs": prompt,
         "parameters": {
-            "max_new_tokens": 512,
+            "max_new_tokens": 256,
             "temperature": 0.4,
             "do_sample": True
         }
     }
 
-    response = requests.post(HF_API_URL, headers=headers, json=payload)
-    if response.status_code == 200:
+    try:
+        response = requests.post(HF_API_URL, headers=headers, json=payload)
+        response.raise_for_status()
         return response.json()[0]['generated_text']
-    else:
-        raise Exception(f"HuggingFace API error: {response.text}")
+    except requests.exceptions.HTTPError as e:
+        if response.status_code == 401:
+            return "[Error] Invalid or missing Hugging Face token."
+        elif response.status_code == 403:
+            return "[Error] You don't have access to this model."
+        elif response.status_code == 503:
+            return "[Error] Model is currently overloaded or not ready."
+        else:
+            return f"[Error] HTTP {response.status_code}: {response.text}"
+    except Exception as e:
+        return f"[Error] {str(e)}"
