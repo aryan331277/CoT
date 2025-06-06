@@ -1,4 +1,8 @@
 import requests
+
+MODEL_NAME = "HuggingFaceH4/zephyr-7b-beta"
+HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
+
 def query_hf_model(prompt, hf_token, is_chat=False):
     headers = {
         "Authorization": f"Bearer {hf_token}",
@@ -50,3 +54,4 @@ def query_hf_model(prompt, hf_token, is_chat=False):
             return f"[Error] HTTP {response.status_code}: {response.text}"
     except Exception as e:
         return f"[Error] {str(e)}"
+
