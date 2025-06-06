@@ -6,15 +6,19 @@ from prompts import THINKER_PROMPT, CRITIC_PROMPT
 st.set_page_config(page_title="🧠 CoT Verifier", layout="wide")
 st.title("🔍 Chain-of-Thought Verifier with Proof Tracing")
 
-question = st.text_area("Enter a question:", height=100, placeholder="E.g., Solve x² + 5x + 6 = 0")
+hf_token = st.text_input("🔑 Hugging Face Token", type="password", help="Get your token from https://huggingface.co/settings/tokens")
+
+question = st.text_area("💬 Enter a question:", height=100, placeholder="E.g., Solve x² + 5x + 6 = 0")
 
 if st.button("Verify"):
-    if not question.strip():
+    if not hf_token:
+        st.warning("Please enter your Hugging Face token.")
+    elif not question.strip():
         st.warning("Please enter a question.")
     else:
         with st.spinner("Thinking..."):
             thinker_prompt = THINKER_PROMPT.format(question=question)
-            raw_reasoning = query_hf_model(thinker_prompt)
+            raw_reasoning = query_hf_model(thinker_prompt, hf_token)
 
         if "[Error]" in raw_reasoning:
             st.error(raw_reasoning)
@@ -26,7 +30,7 @@ if st.button("Verify"):
 
         with st.spinner("Analyzing Claims..."):
             critic_prompt = CRITIC_PROMPT.format(reasoning=raw_reasoning)
-            claim_list = query_hf_model(critic_prompt)
+            claim_list = query_hf_model(critic_prompt, hf_token)
 
         if "[Error]" in claim_list:
             st.error(claim_list)
