@@ -1,25 +1,26 @@
-# reasoning_checker.py
-
-from sympy import *
-from z3 import Solver, parse_smt2_string
+from sympy import simplify, parse_expr
+from z3 import Solver, Implies, And, Or, Not, Bool, sat
 
 def check_math_step(step):
     try:
-        expr = parse_expr(step.replace('=', 'Eq'))
-        if 'Eq' in str(expr):
-            lhs, rhs = expr.lhs, expr.rhs
-            simplified = simplify(lhs - rhs)
-            return simplified == 0
+        if '=' in step:
+            lhs, rhs = step.split('=')
+            lhs_expr = simplify(parse_expr(lhs.strip()))
+            rhs_expr = simplify(parse_expr(rhs.strip()))
+            return lhs_expr == rhs_expr
         else:
-            simplified = simplify(expr)
-            return simplified
+            simplified = simplify(parse_expr(step.strip()))
+            return simplified.is_zero
     except:
         return False
 
 def check_logic_step(step):
     s = Solver()
     try:
-        expr = eval(step.replace("=>", "Implies").replace("&", "And"))
+        expr = eval(
+            step.replace("=>", ",").replace("&", ","),
+            {"Implies": Implies, "And": And, "Or": Or, "Not": Not, "Bool": Bool}
+        )
         s.add(expr)
         return s.check() == sat
     except:
