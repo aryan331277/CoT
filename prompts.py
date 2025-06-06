@@ -7,12 +7,16 @@ Question: {question}
 
 CRITIC_PROMPT = """
 You are a reasoning analyst.
-Extract all logical/mathematical claims from the following Chain-of-Thought.
+Extract only the *logical* and *mathematical* claims from the following chain-of-thought reasoning.
+Return them as a JSON list of strings, no commentary, no prefix.
 
 Chain-of-Thought:
 {reasoning}
 
-Return them as a numbered list:
-1. ...
-2. ...
+Return:
+[
+  "claim1",
+  "claim2",
+  ...
+]
 """
