@@ -3,7 +3,7 @@
 import requests
 
 def query_hf_model(prompt, hf_token):
-    MODEL_NAME = "Qwen/Qwen2-0.5B-Instruct"  # 👈 Valid open model
+    MODEL_NAME = "HuggingFaceTB/SmolLM2-135M-Instruct"  # 👈 Valid open model
     HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}" 
 
     headers = {
