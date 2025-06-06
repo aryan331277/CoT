@@ -1,6 +1,6 @@
 import requests
 
-MODEL_NAME = "tiiuae/falcon-7b-instruct"
+MODEL_NAME = "HuggingFaceH4/zephyr-7b-beta"
 HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
 
 def query_hf_model(prompt, hf_token):
