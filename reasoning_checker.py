@@ -1,27 +1,26 @@
-from sympy import simplify, parse_expr
-from z3 import Solver, Implies, And, Or, Not, Bool, sat
+from sympy import simplify, Eq, symbols
+from sympy.parsing.sympy_parser import parse_expr
+from z3 import Solver, Bool, And, Or, Not, Implies, sat
 
 def check_math_step(step):
     try:
+        x = symbols('x')
         if '=' in step:
             lhs, rhs = step.split('=')
-            lhs_expr = simplify(parse_expr(lhs.strip()))
-            rhs_expr = simplify(parse_expr(rhs.strip()))
-            return lhs_expr == rhs_expr
+            expr = simplify(parse_expr(lhs) - parse_expr(rhs))
+            return expr == 0
         else:
-            simplified = simplify(parse_expr(step.strip()))
-            return simplified.is_zero
+            simplified = simplify(parse_expr(step))
+            return bool(simplified)
     except:
         return False
 
 def check_logic_step(step):
-    s = Solver()
     try:
-        expr = eval(
-            step.replace("=>", ",").replace("&", ","),
-            {"Implies": Implies, "And": And, "Or": Or, "Not": Not, "Bool": Bool}
-        )
-        s.add(expr)
+        s = Solver()
+        A, B, C = Bool('A'), Bool('B'), Bool('C')
+        logic_expr = eval(step.replace("=>", "Implies").replace("&", "And").replace("|", "Or").replace("~", "Not"))
+        s.add(logic_expr)
         return s.check() == sat
     except:
         return False
