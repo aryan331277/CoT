@@ -30,7 +30,7 @@ if st.button("Verify"):
 
         with st.spinner("Analyzing Claims..."):
             critic_prompt = CRITIC_PROMPT.format(reasoning=raw_reasoning)
-            claim_list = query_hf_model(critic_prompt, hf_token)
+            claim_list = query_hf_model(critic_prompt, hf_token,is_chat=True)
 
         if "[Error]" in claim_list:
             st.error(claim_list)
