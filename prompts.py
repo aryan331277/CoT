@@ -1,11 +1,17 @@
-CRITIC_PROMPT = """
-Below is a step-by-step solution to a problem. Extract all mathematical or logical claims made in the reasoning.
+THINKER_PROMPT = """
+Solve the following question step by step.
+Show your full Chain-of-Thought reasoning clearly.
 
-Respond only as a numbered list:
+Question: {question}
+"""
+
+CRITIC_PROMPT = """
+You are a reasoning analyst.
+Extract all logical/mathematical claims from the following Chain-of-Thought.
+
+Chain-of-Thought: {reasoning}
+
+Return them as a list:
 1. ...
 2. ...
-3. ...
-
-Reasoning:
-{reasoning}
 """
