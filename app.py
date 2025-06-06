@@ -1,5 +1,3 @@
-# streamlit_app.py
-
 import streamlit as st
 from hf_utils import query_hf_model
 from reasoning_checker import check_math_step, check_logic_step
