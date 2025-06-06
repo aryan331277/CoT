@@ -1,22 +1,30 @@
-import requests
-
-MODEL_NAME = "HuggingFaceH4/zephyr-7b-beta"
-HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
-
-def query_hf_model(prompt, hf_token):
+def query_hf_model(prompt, hf_token, is_chat=False):
     headers = {
         "Authorization": f"Bearer {hf_token}",
         "Content-Type": "application/json"
     }
 
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": 256,
-            "temperature": 0.4,
-            "do_sample": True
+    if is_chat:
+        payload = {
+            "inputs": [
+                {"role": "system", "content": "You are an expert reasoning checker."},
+                {"role": "user", "content": prompt}
+            ],
+            "parameters": {
+                "max_new_tokens": 256,
+                "temperature": 0.4,
+                "do_sample": True
+            }
         }
-    }
+    else:
+        payload = {
+            "inputs": prompt,
+            "parameters": {
+                "max_new_tokens": 256,
+                "temperature": 0.4,
+                "do_sample": True
+            }
+        }
 
     try:
         response = requests.post(HF_API_URL, headers=headers, json=payload)
@@ -24,6 +32,8 @@ def query_hf_model(prompt, hf_token):
         result = response.json()
         if isinstance(result, list):
             return result[0]['generated_text']
+        elif isinstance(result, dict) and 'generated_text' in result:
+            return result['generated_text']
         elif isinstance(result, dict) and 'error' in result:
             return f"[Error] {result['error']}"
         else:
