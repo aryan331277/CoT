@@ -1,11 +1,10 @@
 import requests
 
-def query_hf_model(prompt, hf_token):
-    MODEL_NAME = "tiiuae/falcon-7b-instruct"
-    HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
+MODEL_NAME = "tiiuae/falcon-7b-instruct"
+HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
 
+def query_hf_model(prompt):
     headers = {
-        "Authorization": f"Bearer {hf_token}",
         "Content-Type": "application/json"
     }
 
@@ -21,24 +20,12 @@ def query_hf_model(prompt, hf_token):
     try:
         response = requests.post(HF_API_URL, headers=headers, json=payload)
         response.raise_for_status()
-        resp_json = response.json()
-
-        if isinstance(resp_json, list) and 'generated_text' in resp_json[0]:
-            return resp_json[0]['generated_text']
-        elif isinstance(resp_json, dict) and 'generated_text' in resp_json:
-            return resp_json['generated_text']
-        elif "estimated_time" in resp_json:
-            return "[Info] Model is warming up. Please retry in a few seconds."
+        result = response.json()
+        if isinstance(result, list):
+            return result[0]['generated_text']
+        elif isinstance(result, dict) and 'error' in result:
+            return f"[Error] {result['error']}"
         else:
-            return "[Error] Unexpected response format."
-    except requests.exceptions.HTTPError as e:
-        if response.status_code == 401:
-            return "[Error] Invalid or missing Hugging Face token."
-        elif response.status_code == 403:
-            return "[Error] You don't have access to this model."
-        elif response.status_code == 503:
-            return "[Error] Model is currently overloaded or not ready."
-        else:
-            return f"[Error] HTTP {response.status_code}: {response.text}"
+            return str(result)
     except Exception as e:
         return f"[Error] {str(e)}"
