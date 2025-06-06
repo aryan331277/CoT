@@ -1,3 +1,4 @@
+import requests
 def query_hf_model(prompt, hf_token, is_chat=False):
     headers = {
         "Authorization": f"Bearer {hf_token}",
