@@ -6,21 +6,19 @@ from prompts import THINKER_PROMPT, CRITIC_PROMPT
 st.set_page_config(page_title="🧠 CoT Verifier", layout="wide")
 st.title("🔍 Chain-of-Thought Verifier with Proof Tracing")
 
-st.markdown("Enter your **Hugging Face API token** below to use Mistral 7B.")
-
-hf_token = st.text_input("Hugging Face Token", type="password", help="Get your token from https://huggingface.co/settings/tokens") 
-
 question = st.text_area("Enter a question:", height=100, placeholder="E.g., Solve x² + 5x + 6 = 0")
 
 if st.button("Verify"):
-    if not hf_token:
-        st.warning("Please enter your Hugging Face token.")
-    elif not question.strip():
+    if not question.strip():
         st.warning("Please enter a question.")
     else:
         with st.spinner("Thinking..."):
             thinker_prompt = THINKER_PROMPT.format(question=question)
-            raw_reasoning = query_hf_model(thinker_prompt, hf_token)
+            raw_reasoning = query_hf_model(thinker_prompt)
+
+        if "[Error]" in raw_reasoning:
+            st.error(raw_reasoning)
+            st.stop()
 
         st.markdown("---")
         st.subheader("🧾 Full Reasoning Chain")
@@ -28,7 +26,11 @@ if st.button("Verify"):
 
         with st.spinner("Analyzing Claims..."):
             critic_prompt = CRITIC_PROMPT.format(reasoning=raw_reasoning)
-            claim_list = query_hf_model(critic_prompt, hf_token)
+            claim_list = query_hf_model(critic_prompt)
+
+        if "[Error]" in claim_list:
+            st.error(claim_list)
+            st.stop()
 
         st.markdown("---")
         st.subheader("🔍 Extracted Claims")
