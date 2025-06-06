@@ -1,17 +1,21 @@
-from sympy import *
-from z3 import *
+# reasoning_checker.py
 
-# Example: Math Checker with SymPy
+from sympy import *
+from z3 import Solver, parse_smt2_string
+
 def check_math_step(step):
     try:
-        parsed = parse_expr(step)
-        # Simplify or evaluate
-        simplified = simplify(parsed)
-        return True, simplified
+        expr = parse_expr(step.replace('=', 'Eq'))
+        if 'Eq' in str(expr):
+            lhs, rhs = expr.lhs, expr.rhs
+            simplified = simplify(lhs - rhs)
+            return simplified == 0
+        else:
+            simplified = simplify(expr)
+            return simplified
     except:
-        return False, None
+        return False
 
-# Example: Logic Checker with Z3
 def check_logic_step(step):
     s = Solver()
     try:
