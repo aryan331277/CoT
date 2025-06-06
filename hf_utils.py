@@ -3,7 +3,7 @@
 import requests
 
 def query_hf_model(prompt, hf_token):
-    MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"  # 👈 Open model
+    MODEL_NAME = "Qwen/Qwen2-0.5B-Instruct"  # 👈 Valid open model
     HF_API_URL = f"https://api-inference.huggingface.co/models/{MODEL_NAME}" 
 
     headers = {
